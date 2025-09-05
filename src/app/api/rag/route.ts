@@ -55,6 +55,9 @@ export async function POST(request: NextRequest) {
     // Upsert to Pinecone
     await index.upsert(vectors);
 
+    // Add a small delay to ensure vectors are available for querying
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     // Step 3: Retrieve relevant chunks
     const queryEmbedding = await embeddings.embedQuery(query);
     const retrievalResults = await index.query({
@@ -130,5 +133,4 @@ Answer:`;
       { status: 500 }
     );
   }
-}"// Build fix" 
-// Build timestamp: $(date) 
+}
