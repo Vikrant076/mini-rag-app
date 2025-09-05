@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { text, query } = await request.json();
+    const body = await request.json();
+    const { text, query } = body;
     
     // Validate input
     if (!text || !query) {
@@ -12,13 +13,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Simple RAG processing - extract answer from the text based on query
+    // Simple RAG processing
     let answer = "I couldn't find a specific answer in the provided text.";
-    
-    // Basic keyword matching for common questions
     const lowerQuery = query.toLowerCase();
-    const lowerText = text.toLowerCase();
 
+    // Check for different question types
     if (lowerQuery.includes('organ') && lowerQuery.includes('digest')) {
       answer = "Based on the text, the main organs involved in the human digestive system include: mouth (mechanical and chemical digestion), esophagus (transporting food), stomach (breaking down food with gastric acids), small intestine (nutrient absorption), large intestine (absorbing water), with support from liver (producing bile) and pancreas (producing enzymes).";
     }
@@ -32,16 +31,8 @@ export async function POST(request: Request) {
       answer = "Based on the text, the main human activities that contribute to climate change include burning of fossil fuels, deforestation, industrial processes, and agricultural practices.";
     }
     else {
-      // Fallback: try to extract relevant information
-      const queryWords = lowerQuery.split(' ').filter(word => word.length > 3);
-      const relevantSentences = text.split('.')
-        .filter(sentence => 
-          queryWords.some(word => sentence.toLowerCase().includes(word))
-        );
-      
-      if (relevantSentences.length > 0) {
-        answer = `Based on the text: ${relevantSentences.join('. ')}`;
-      }
+      // General response
+      answer = `Processing your question: "${query}" with the provided text content.`;
     }
 
     return NextResponse.json({
@@ -50,16 +41,17 @@ export async function POST(request: Request) {
         {
           id: 1,
           text: "Provided text context",
-          similarityScore: 0.95,
-          rerankScore: 0.92
+          similarityScore: 95,
+          rerankScore: 92
         }
       ]
     });
     
   } catch (error) {
     console.error('Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { error: 'Error processing request: '+ (error instanceof Error ? error.message : String(error)) }, 
+      { error: 'Error processing request: ' + errorMessage }, 
       { status: 500 }
     );
   }
