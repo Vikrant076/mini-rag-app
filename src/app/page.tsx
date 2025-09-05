@@ -52,7 +52,7 @@ export default function Home() {
   };
 
   // Function to format scores properly
-  const formatScore = (score: any): number => {
+  const formatScore = (score: number | string | undefined): number => {
     if (typeof score === 'number') {
       return Math.min(100, Math.max(0, Math.round(score * 100)));
     }
