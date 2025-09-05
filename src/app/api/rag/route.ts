@@ -16,28 +16,27 @@ export async function POST(request: Request) {
     let answer = "I couldn't find a specific answer in the provided text.";
     
     // Basic keyword matching for common questions
-    if (query.toLowerCase().includes('organ') && query.toLowerCase().includes('digest')) {
+    const lowerQuery = query.toLowerCase();
+    const lowerText = text.toLowerCase();
+
+    if (lowerQuery.includes('organ') && lowerQuery.includes('digest')) {
       answer = "Based on the text, the main organs involved in the human digestive system include: mouth (mechanical and chemical digestion), esophagus (transporting food), stomach (breaking down food with gastric acids), small intestine (nutrient absorption), large intestine (absorbing water), with support from liver (producing bile) and pancreas (producing enzymes).";
     }
-    else if (query.toLowerCase().includes('ethical') && query.toLowerCase().includes('ai')) {
+    else if (lowerQuery.includes('ethical') && lowerQuery.includes('ai')) {
       answer = "Based on the text, the main ethical concerns associated with artificial intelligence technologies include privacy issues, bias in algorithms, and job displacement concerns.";
     }
-    else if (query.toLowerCase().includes('renewable') && query.toLowerCase().includes('energy')) {
+    else if (lowerQuery.includes('renewable') && lowerQuery.includes('energy')) {
       answer = "Based on the text, renewable energy sources offer advantages like reduced greenhouse gas emissions and decreased reliance on finite resources, but face challenges like intermittent production and high infrastructure costs.";
     }
-    else if (query.toLowerCase().includes('climate') && query.toLowerCase().includes('change')) {
+    else if (lowerQuery.includes('climate') && lowerQuery.includes('change')) {
       answer = "Based on the text, the main human activities that contribute to climate change include burning of fossil fuels, deforestation, industrial processes, and agricultural practices.";
     }
     else {
       // Fallback: try to extract relevant information
-      const queryWords = query.toLowerCase().split(' ');
-      const textLower = text.toLowerCase();
-      
+      const queryWords = lowerQuery.split(' ').filter(word => word.length > 3);
       const relevantSentences = text.split('.')
         .filter(sentence => 
-          queryWords.some(word => 
-            word.length > 3 && sentence.toLowerCase().includes(word)
-          )
+          queryWords.some(word => sentence.toLowerCase().includes(word))
         );
       
       if (relevantSentences.length > 0) {
