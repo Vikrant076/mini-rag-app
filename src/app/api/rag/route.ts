@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     const rerankedChunks = rerankResponse.results.map(result => ({
       ...retrievedChunks[result.index],
-      rerankScore: result.relevance_score
+      rerankScore: result.relevanceScore
     }));
 
     // Step 5: Generate answer with Groq
